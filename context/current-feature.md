@@ -2,7 +2,7 @@
 
 ## Feature Name
 
-Database Seed
+Dashboard Collections — Real Data
 
 ## Status <!-- Do not remove this line -->
 
@@ -21,6 +21,8 @@ Completed
 ## History <!-- Do not remove this line -->
 
 <!-- Keep this updated. Earliest to latest -->
+
+- **2026-04-18** — Dashboard Collections (Real Data): Implemented. Created `lib/db/collections.ts` with `getDashboardData()` that fetches collections + stats from Neon DB for the demo user. Each collection includes its item type breakdown (name, icon, color, count) sorted by usage count, and a `dominantColor` derived from the most-used type. Converted `app/dashboard/page.tsx` to a server component that calls `getDashboardData()` and passes results as props. Extracted all interactive/client code into `app/dashboard/DashboardShell.tsx` (useState for sidebar collapse and mobile drawer). Updated `ItemTypeIcon` to handle Lucide component names from DB ("Code", "Sparkles", "Terminal", "StickyNote", "File", "Image", "Link") alongside legacy mock-data icon keys. Collection cards now show real data, type icons from DB, and a subtle colored left border derived from the dominant type color. Stats cards (total items, collections, favorites) now use live DB counts. Sidebar collection list uses real data. Pinned and Recent Items sections still use mock data (deferred to next feature).
 
 - **2026-04-18** — Database Seed: Added emailVerified DateTime? to User schema + migration. Installed bcryptjs. Created prisma/seed.ts seeding 1 user (demo@devstash.io, hashed password, 12 rounds), 7 system item types (Lucide icon names), and 5 collections with 15 items total: React Patterns (3 snippets), AI Workflows (3 prompts), DevOps (1 snippet + 1 command + 2 links), Terminal Commands (4 commands), Design Resources (4 links). Seed is idempotent via upsert on user and item types. Run with: bun run prisma/seed.ts
 - **2026-04-18** — DB test script: Added dotenv to prisma.config.ts so Prisma CLI loads .env (Node process doesn't get Bun's auto env loading). Created scripts/test-db.ts to verify connection via SELECT NOW() and row counts across all tables.
