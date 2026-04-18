@@ -2,7 +2,7 @@
 
 ## Feature Name
 
-Neon PostgreSQL + Prisma Setup
+Database Seed
 
 ## Status <!-- Do not remove this line -->
 
@@ -22,6 +22,7 @@ Completed
 
 <!-- Keep this updated. Earliest to latest -->
 
+- **2026-04-18** — Database Seed: Added emailVerified DateTime? to User schema + migration. Installed bcryptjs. Created prisma/seed.ts seeding 1 user (demo@devstash.io, hashed password, 12 rounds), 7 system item types (Lucide icon names), and 5 collections with 15 items total: React Patterns (3 snippets), AI Workflows (3 prompts), DevOps (1 snippet + 1 command + 2 links), Terminal Commands (4 commands), Design Resources (4 links). Seed is idempotent via upsert on user and item types. Run with: bun run prisma/seed.ts
 - **2026-04-18** — DB test script: Added dotenv to prisma.config.ts so Prisma CLI loads .env (Node process doesn't get Bun's auto env loading). Created scripts/test-db.ts to verify connection via SELECT NOW() and row counts across all tables.
 - **2026-04-18** — Neon PostgreSQL + Prisma 7 Setup: Installed prisma@7.7.0, @prisma/client, @prisma/adapter-neon. Created prisma/schema.prisma with prisma-client generator (output required in v7), all app models (User, ItemType, Collection, Tag, Item, ItemTag) plus NextAuth models (Account, Session, VerificationToken) with cascade deletes and indexes. Created prisma.config.ts (Prisma 7 replaces datasource URL block with config file; DIRECT_URL used for CLI, DATABASE_URL pooled for runtime). Created lib/prisma.ts singleton using PrismaNeon adapter. Generated client to generated/prisma/client. Added /generated to .gitignore.
 - **2026-04-18** — Dashboard UI Phase 3: Added 4 stats cards (total items, total collections, favorite items, favorite collections). Replaced Collections section with Recent Collections (top 3 by updatedAt). Added Recent Items section (10 items sorted by updatedAt desc) with type badge and date. Extended mock-data.ts with 6 more items (total 10) and added updatedAt to all collections.
