@@ -92,23 +92,35 @@ function SidebarContent({
             Types
           </p>
         )}
-        {itemTypes.map((type) => (
-          <Link
-            key={type.id}
-            href={`/items/${type.pluralName.toLowerCase()}`}
-            className="flex items-center justify-between w-full px-2 py-1.5 text-sm rounded-md hover:bg-muted text-foreground"
-          >
-            <div className="flex items-center gap-2">
-              <ItemTypeIcon icon={type.icon} color={type.color} />
-              {!collapsed && <span>{type.pluralName}</span>}
-            </div>
-            {!collapsed && (
-              <span className="text-muted-foreground text-xs">
-                {type.count}
-              </span>
-            )}
-          </Link>
-        ))}
+        {itemTypes.map((type) => {
+          const isPro = type.name === "File" || type.name === "Image";
+          return (
+            <Link
+              key={type.id}
+              href={`/items/${type.pluralName.toLowerCase()}`}
+              className="flex items-center justify-between w-full px-2 py-1.5 text-sm rounded-md hover:bg-muted text-foreground"
+            >
+              <div className="flex items-center gap-2">
+                <ItemTypeIcon icon={type.icon} color={type.color} />
+                {!collapsed && (
+                  <span className="flex items-center gap-1.5">
+                    {type.pluralName}
+                    {isPro && (
+                      <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 leading-none border-amber-500/50 text-amber-500 font-medium">
+                        PRO
+                      </Badge>
+                    )}
+                  </span>
+                )}
+              </div>
+              {!collapsed && (
+                <span className="text-muted-foreground text-xs">
+                  {type.count}
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </div>
 
       <Separator className="my-4" />

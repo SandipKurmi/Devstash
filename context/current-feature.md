@@ -1,22 +1,27 @@
-# Current Feature. <!-- Do not remove this line -->
+# Current Feature: Add Pro Badge to Sidebar <!-- Do not remove this line -->
 
 ## Feature Name
 
-Dashboard Items — Real Data
+Add Pro Badge to Sidebar
 
 ## Status <!-- Do not remove this line -->
 
 <!-- Not Started|In Progress|Completed -->
 
-Completed
+In Progress
 
 ## Goals <!-- Do not remove this line -->
 
-<!-- Goals & requirements -->
+- Add a PRO badge to the Files item type in the sidebar
+- Add a PRO badge to the Images item type in the sidebar
+- Use ShadCN UI Badge component
+- Badge must be clean and subtle
+- Badge text must be "PRO" (all uppercase)
 
 ## Notes <!-- Do not remove this line -->
 
-<!-- Any extra notes -->
+- Only Files and Images types get the PRO badge
+- Use the existing ShadCN Badge component (already in project)
 
 ## History <!-- Do not remove this line -->
 
