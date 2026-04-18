@@ -25,6 +25,9 @@ import {
   Link2,
   MoreHorizontal,
   Pin,
+  Layers,
+  FolderOpen,
+  Clock,
 } from "lucide-react";
 import { itemTypes, collections, items, currentUser } from "@/lib/mock-data";
 
@@ -180,10 +183,36 @@ function SidebarContent({
   );
 }
 
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export default function DashboardPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
   const pinnedItems = items.filter((item) => item.isPinned);
+  const recentItems = [...items]
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .slice(0, 10);
+  const recentCollections = [...collections]
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .slice(0, 3);
+
+  const totalItems = items.length;
+  const totalCollections = collections.length;
+  const favoriteItems = items.filter((i) => i.isFavorite).length;
+  const favoriteCollections = collections.filter((c) => c.isFavorite).length;
+
+  const stats = [
+    { label: "Total Items", value: totalItems, icon: Layers, color: "#10b981" },
+    { label: "Collections", value: totalCollections, icon: FolderOpen, color: "#3b82f6" },
+    { label: "Favorite Items", value: favoriteItems, icon: Star, color: "#f59e0b" },
+    { label: "Favorite Collections", value: favoriteCollections, icon: Star, color: "#ec4899" },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -233,7 +262,6 @@ export default function DashboardPage() {
             sidebarCollapsed ? "w-14" : "w-56"
           }`}
         >
-          {/* Sidebar toggle inside sidebar */}
           <div
             className={`flex ${sidebarCollapsed ? "justify-center" : "justify-end"} p-2 border-b border-border`}
           >
@@ -266,11 +294,35 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          {/* Collections */}
+          {/* Stats cards */}
+          <section className="mb-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {stats.map((stat) => (
+                <Card key={stat.label} className="border-border">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-muted-foreground">
+                        {stat.label}
+                      </span>
+                      <stat.icon
+                        className="w-4 h-4"
+                        style={{ color: stat.color }}
+                      />
+                    </div>
+                    <p className="text-2xl font-bold text-foreground">
+                      {stat.value}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+
+          {/* Recent collections */}
           <section className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-semibold text-foreground">
-                Collections
+                Recent Collections
               </h2>
               <Link
                 href="/collections"
@@ -280,7 +332,7 @@ export default function DashboardPage() {
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {collections.map((collection) => (
+              {recentCollections.map((collection) => (
                 <Card
                   key={collection.id}
                   className="cursor-pointer hover:bg-muted/40 transition-colors group"
@@ -334,7 +386,7 @@ export default function DashboardPage() {
           </section>
 
           {/* Pinned items */}
-          <section>
+          <section className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <Pin className="w-4 h-4 text-muted-foreground" />
               <h2 className="text-base font-semibold text-foreground">
@@ -344,13 +396,6 @@ export default function DashboardPage() {
             <div className="space-y-2">
               {pinnedItems.map((item) => {
                 const type = itemTypes.find((t) => t.id === item.typeId);
-                const date = new Date(item.updatedAt).toLocaleDateString(
-                  "en-US",
-                  {
-                    month: "short",
-                    day: "numeric",
-                  },
-                );
                 return (
                   <div
                     key={item.id}
@@ -394,8 +439,83 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <span className="text-xs text-muted-foreground shrink-0 mt-0.5">
-                      {date}
+                      {formatDate(item.updatedAt)}
                     </span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Recent items */}
+          <section>
+            <div className="flex items-center gap-2 mb-4">
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              <h2 className="text-base font-semibold text-foreground">
+                Recent Items
+              </h2>
+            </div>
+            <div className="space-y-2">
+              {recentItems.map((item) => {
+                const type = itemTypes.find((t) => t.id === item.typeId);
+                return (
+                  <div
+                    key={item.id}
+                    className="flex items-start gap-3 p-3 rounded-lg border border-border hover:bg-muted/40 cursor-pointer transition-colors"
+                  >
+                    {type && (
+                      <div
+                        className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 mt-0.5"
+                        style={{ backgroundColor: `${type.color}20` }}
+                      >
+                        <ItemTypeIcon
+                          icon={type.icon}
+                          color={type.color}
+                          size={15}
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className="text-sm font-medium text-foreground">
+                          {item.title}
+                        </span>
+                        {item.isFavorite && (
+                          <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+                        )}
+                        {item.isPinned && (
+                          <Pin className="w-3 h-3 text-muted-foreground" />
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground line-clamp-1 mb-1.5">
+                        {item.description}
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {item.tags.map((tag) => (
+                          <Badge
+                            key={tag}
+                            variant="secondary"
+                            className="text-xs px-1.5 py-0"
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      {type && (
+                        <Badge
+                          variant="outline"
+                          className="text-xs px-1.5 py-0 border-0 font-normal"
+                          style={{ color: type.color }}
+                        >
+                          {type.name}
+                        </Badge>
+                      )}
+                      <span className="text-xs text-muted-foreground">
+                        {formatDate(item.updatedAt)}
+                      </span>
+                    </div>
                   </div>
                 );
               })}

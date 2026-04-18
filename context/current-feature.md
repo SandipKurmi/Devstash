@@ -2,7 +2,7 @@
 
 ## Feature Name
 
-Dashboard UI Phase 2
+Dashboard UI Phase 3
 
 ## Status <!-- Do not remove this line -->
 
@@ -21,6 +21,8 @@ Completed
 ## History <!-- Do not remove this line -->
 
 <!-- Keep this updated. Earliest to latest -->
+
+- **2026-04-18** — Dashboard UI Phase 3: Added 4 stats cards (total items, total collections, favorite items, favorite collections). Replaced Collections section with Recent Collections (top 3 by updatedAt). Added Recent Items section (10 items sorted by updatedAt desc) with type badge and date. Extended mock-data.ts with 6 more items (total 10) and added updatedAt to all collections.
 
 - **2026-04-18** — Dashboard UI Refinement: Updated mock data to match screenshots (John Doe user, corrected type counts, 6 collections with favorites). Replaced emoji icons with Lucide icons. Sidebar labels updated to Types / FAVORITES / ALL COLLECTIONS with filled star icons and settings gear. Dashboard restructured to h1 "Dashboard" + subtitle. Collections section with "View all" link, 3-col grid, type icon badges, hover kebab menu. Pinned section changed to vertical list layout with colored type icon badges and dates. Fixed button-in-button hydration error on mobile drawer trigger.
 - **2026-04-18** — Dashboard UI Phase 2: Collapsible sidebar, item type links (/items/TYPE), favorite collections, most recent collections, user avatar area, mobile drawer support.
