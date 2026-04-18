@@ -25,3 +25,5 @@ bun lint       # Run ESLint (eslint-config-next/core-web-vitals + typescript)
 ```
 
 The package manager is **bun** (see `bun.lock`). Do not use npm/yarn/pnpm.
+
+**IMPORTANT:** Do not add Claude to any commit messages
