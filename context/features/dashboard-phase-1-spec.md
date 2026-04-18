@@ -1,12 +1,10 @@
-# Current Feature
+# Dashboard UI Phase 1 Spec
 
-<!-- Dashboard UI Phase 1 -->
+## Overview
 
-## Status
+This is phase 1 of 3 for the dashboard UI layout. Use the screenshot referenced below for how it should look.
 
-In Progress
-
-## Goals
+## Requirements for phase 1
 
 - ShadCN UI initialization and components
 - ShadCN component installation
@@ -16,16 +14,10 @@ In Progress
 - Top bar with search and new item button (display only)
 - Placeholder for sidebar and main area. Just add an h2 with "Sidebar" and "Main" for now.
 
-## Notes
+## References
 
-References:
 - @context/screenshots/dashboard-ui-main.png
 - @context/project-overview.md
 - @src/lib/mock-data.ts
 - @context/features/dashboard-phase-2-spec.md
 - @context/features/dashboard-phase-3-spec.md
-
-## History
-
-- **2026-04-18** — Dashboard UI Phase 1: ShadCN init, dashboard route, top bar, placeholders for sidebar and main area.
-- **2026-04-17** — Initial Next.js 16.2.3 project setup with React 19.2.4. Removed default boilerplate assets and UI. Added CLAUDE.md, context docs (project overview, coding standards, AI interaction guidelines, feature tracking). Pushed to GitHub (`SandipKurmi/Devstash`).

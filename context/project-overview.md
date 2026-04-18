@@ -336,3 +336,24 @@ git switch -c lesson-01-setup
 ---
 
 🏗️ **DevStash — Store Smarter. Build Faster.**
+
+---
+
+## 🖼️ UI Screenshots
+
+Reference screenshots are located in `context/screenshots/`.
+
+### `dashboard-ui-main.png`
+
+The main dashboard view. Shows:
+- **Top bar**: Global search (`⌘K`), "New Collection" and "New Item" action buttons
+- **Left sidebar**: Item type filters (Snippets, Prompts, Commands, Notes, Files, Images, Links) with counts, Collections section split into Favorites and All Collections
+- **Main content**: Dashboard heading ("Your developer knowledge hub"), Collections grid with cards showing name, item count, description, and type icons, followed by a Pinned items list with item cards showing title, description, tags, and metadata
+
+### `dashboard-ui-drawer.png`
+
+The item detail drawer/panel view. Shows:
+- **Right-side drawer** sliding open over the dashboard with full item detail
+- **Header**: Item title ("useAuth Hook"), type badge (Snippets, typescript), action buttons (Favorite, Pin, Copy, Edit, Delete)
+- **Body**: Description field, syntax-highlighted code content, Tags section, Collections association, and Details (Created/Updated timestamps)
+- **Background**: Dashboard remains visible with sidebar and collections grid
