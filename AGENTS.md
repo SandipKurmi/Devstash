@@ -17,6 +17,15 @@ bun lint    # ESLint
 
 Do NOT use npm/yarn/pnpm.
 
+## Context files.
+
+Read the following to get the full context of the project.
+
+- @context/project-overview.md
+- @context/coding-standards.md
+- @context/ai-interaction.md
+- @context/current-feature.md
+
 ## Tailwind CSS v4
 
 **CRITICAL**: v4 uses CSS-based config. NO `tailwind.config.ts` files. Configure theme in `app/globals.css` with `@theme`:
