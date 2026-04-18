@@ -16,7 +16,7 @@
 
 ## History <!-- Do not remove this line -->
 
-<!-- Keep this updated. Earliest to latest -->
+<!-- Keep this updated. Earliest to latest. Numbered sequentially. -->
 
 1. **2026-04-17** — Initial Next.js 16.2.3 project setup with React 19.2.4. Removed default boilerplate assets and UI. Added CLAUDE.md, context docs (project overview, coding standards, AI interaction guidelines, feature tracking). Pushed to GitHub (`SandipKurmi/Devstash`).
 2. **2026-04-18** — Dashboard UI Phase 1: Full dashboard implementation matching screenshot. Added shadcn components (card, badge, separator, scroll-area), top bar with logo, search (⌘K hint), New Collection and New Item buttons. Sidebar with item types and Collections. Main area with "Your developer knowledge hub" heading, Collections grid (4 cards), Pinned items grid (3 items).
