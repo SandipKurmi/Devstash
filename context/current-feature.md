@@ -2,7 +2,7 @@
 
 ## Feature Name
 
-Dashboard Collections — Real Data
+Dashboard Items — Real Data
 
 ## Status <!-- Do not remove this line -->
 
@@ -21,6 +21,8 @@ Completed
 ## History <!-- Do not remove this line -->
 
 <!-- Keep this updated. Earliest to latest -->
+
+- **2026-04-18** — Dashboard Items (Real Data): Implemented. Created `lib/db/items.ts` with `getItemsForDashboard(userId)` that queries pinned items and 10 most-recent items in parallel, including type (name/icon/color) and tags via the ItemTag join table. Updated `getDashboardData()` to call `getItemsForDashboard` and return `pinnedItems` and `recentItems`. Updated `page.tsx` to pass both to `DashboardShell`. Refactored Pinned and Recent Items sections in `DashboardShell` to use real item data with `item.type.icon/color/name` directly — no more mock-data `items` import. Pinned section now hidden entirely when no pinned items exist.
 
 - **2026-04-18** — Dashboard Collections (Real Data): Implemented. Created `lib/db/collections.ts` with `getDashboardData()` that fetches collections + stats from Neon DB for the demo user. Each collection includes its item type breakdown (name, icon, color, count) sorted by usage count, and a `dominantColor` derived from the most-used type. Converted `app/dashboard/page.tsx` to a server component that calls `getDashboardData()` and passes results as props. Extracted all interactive/client code into `app/dashboard/DashboardShell.tsx` (useState for sidebar collapse and mobile drawer). Updated `ItemTypeIcon` to handle Lucide component names from DB ("Code", "Sparkles", "Terminal", "StickyNote", "File", "Image", "Link") alongside legacy mock-data icon keys. Collection cards now show real data, type icons from DB, and a subtle colored left border derived from the dominant type color. Stats cards (total items, collections, favorites) now use live DB counts. Sidebar collection list uses real data. Pinned and Recent Items sections still use mock data (deferred to next feature).
 

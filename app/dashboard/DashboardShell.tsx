@@ -32,8 +32,8 @@ import {
   StickyNote,
   File as FileIcon,
 } from "lucide-react";
-import { itemTypes, items, currentUser } from "@/lib/mock-data";
-import type { CollectionWithTypes, DashboardStats } from "@/lib/db/collections";
+import { itemTypes, currentUser } from "@/lib/mock-data";
+import type { CollectionWithTypes, DashboardStats, DashboardItem } from "@/lib/db/collections";
 
 function ItemTypeIcon({
   icon,
@@ -208,16 +208,14 @@ function formatDate(dateStr: string) {
 interface DashboardShellProps {
   collections: CollectionWithTypes[];
   stats: DashboardStats;
+  pinnedItems: DashboardItem[];
+  recentItems: DashboardItem[];
 }
 
-export default function DashboardShell({ collections, stats }: DashboardShellProps) {
+export default function DashboardShell({ collections, stats, pinnedItems, recentItems }: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
-  const pinnedItems = items.filter((item) => item.isPinned);
-  const recentItems = [...items]
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    .slice(0, 10);
   const recentCollections = collections.slice(0, 3);
 
   const statsCards = [
@@ -396,34 +394,27 @@ export default function DashboardShell({ collections, stats }: DashboardShellPro
             </div>
           </section>
 
-          {/* Pinned items */}
-          <section className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <Pin className="w-4 h-4 text-muted-foreground" />
-              <h2 className="text-base font-semibold text-foreground">
-                Pinned
-              </h2>
-            </div>
-            <div className="space-y-2">
-              {pinnedItems.map((item) => {
-                const type = itemTypes.find((t) => t.id === item.typeId);
-                return (
+          {/* Pinned items — hidden when empty */}
+          {pinnedItems.length > 0 && (
+            <section className="mb-8">
+              <div className="flex items-center gap-2 mb-4">
+                <Pin className="w-4 h-4 text-muted-foreground" />
+                <h2 className="text-base font-semibold text-foreground">
+                  Pinned
+                </h2>
+              </div>
+              <div className="space-y-2">
+                {pinnedItems.map((item) => (
                   <div
                     key={item.id}
                     className="flex items-start gap-3 p-3 rounded-lg border border-border hover:bg-muted/40 cursor-pointer transition-colors"
                   >
-                    {type && (
-                      <div
-                        className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 mt-0.5"
-                        style={{ backgroundColor: `${type.color}20` }}
-                      >
-                        <ItemTypeIcon
-                          icon={type.icon}
-                          color={type.color}
-                          size={15}
-                        />
-                      </div>
-                    )}
+                    <div
+                      className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 mt-0.5"
+                      style={{ backgroundColor: `${item.type.color}20` }}
+                    >
+                      <ItemTypeIcon icon={item.type.icon} color={item.type.color} size={15} />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-0.5">
                         <span className="text-sm font-medium text-foreground">
@@ -438,12 +429,8 @@ export default function DashboardShell({ collections, stats }: DashboardShellPro
                         {item.description}
                       </p>
                       <div className="flex flex-wrap gap-1">
-                        {item.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="secondary"
-                            className="text-xs px-1.5 py-0"
-                          >
+                        {item.tags.map((tag: string) => (
+                          <Badge key={tag} variant="secondary" className="text-xs px-1.5 py-0">
                             {tag}
                           </Badge>
                         ))}
@@ -453,10 +440,10 @@ export default function DashboardShell({ collections, stats }: DashboardShellPro
                       {formatDate(item.updatedAt)}
                     </span>
                   </div>
-                );
-              })}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Recent items */}
           <section>
@@ -467,25 +454,17 @@ export default function DashboardShell({ collections, stats }: DashboardShellPro
               </h2>
             </div>
             <div className="space-y-2">
-              {recentItems.map((item) => {
-                const type = itemTypes.find((t) => t.id === item.typeId);
-                return (
+              {recentItems.map((item) => (
                   <div
                     key={item.id}
                     className="flex items-start gap-3 p-3 rounded-lg border border-border hover:bg-muted/40 cursor-pointer transition-colors"
                   >
-                    {type && (
-                      <div
-                        className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 mt-0.5"
-                        style={{ backgroundColor: `${type.color}20` }}
-                      >
-                        <ItemTypeIcon
-                          icon={type.icon}
-                          color={type.color}
-                          size={15}
-                        />
-                      </div>
-                    )}
+                    <div
+                      className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 mt-0.5"
+                      style={{ backgroundColor: `${item.type.color}20` }}
+                    >
+                      <ItemTypeIcon icon={item.type.icon} color={item.type.color} size={15} />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-0.5">
                         <span className="text-sm font-medium text-foreground">
@@ -502,34 +481,27 @@ export default function DashboardShell({ collections, stats }: DashboardShellPro
                         {item.description}
                       </p>
                       <div className="flex flex-wrap gap-1">
-                        {item.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="secondary"
-                            className="text-xs px-1.5 py-0"
-                          >
+                        {item.tags.map((tag: string) => (
+                          <Badge key={tag} variant="secondary" className="text-xs px-1.5 py-0">
                             {tag}
                           </Badge>
                         ))}
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-1 shrink-0">
-                      {type && (
-                        <Badge
-                          variant="outline"
-                          className="text-xs px-1.5 py-0 border-0 font-normal"
-                          style={{ color: type.color }}
-                        >
-                          {type.name}
-                        </Badge>
-                      )}
+                      <Badge
+                        variant="outline"
+                        className="text-xs px-1.5 py-0 border-0 font-normal"
+                        style={{ color: item.type.color }}
+                      >
+                        {item.type.name}
+                      </Badge>
                       <span className="text-xs text-muted-foreground">
                         {formatDate(item.updatedAt)}
                       </span>
                     </div>
                   </div>
-                );
-              })}
+              ))}
             </div>
           </section>
         </main>

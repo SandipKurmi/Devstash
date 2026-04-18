@@ -1,4 +1,7 @@
 import { prisma } from "@/lib/prisma";
+import { getItemsForDashboard, type DashboardItem } from "@/lib/db/items";
+
+export type { DashboardItem };
 
 const DEMO_EMAIL = "demo@devstash.io";
 
@@ -30,6 +33,8 @@ export interface DashboardStats {
 export async function getDashboardData(): Promise<{
   collections: CollectionWithTypes[];
   stats: DashboardStats;
+  pinnedItems: DashboardItem[];
+  recentItems: DashboardItem[];
 }> {
   const user = await prisma.user.findUnique({ where: { email: DEMO_EMAIL } });
 
@@ -37,10 +42,12 @@ export async function getDashboardData(): Promise<{
     return {
       collections: [],
       stats: { totalItems: 0, totalCollections: 0, favoriteItems: 0, favoriteCollections: 0 },
+      pinnedItems: [],
+      recentItems: [],
     };
   }
 
-  const [rawCollections, totalItems, favoriteItems] = await Promise.all([
+  const [rawCollections, totalItems, favoriteItems, itemsForDashboard] = await Promise.all([
     prisma.collection.findMany({
       where: { userId: user.id },
       include: {
@@ -53,6 +60,7 @@ export async function getDashboardData(): Promise<{
     }),
     prisma.item.count({ where: { userId: user.id } }),
     prisma.item.count({ where: { userId: user.id, isFavorite: true } }),
+    getItemsForDashboard(user.id),
   ]);
 
   const collections: CollectionWithTypes[] = rawCollections.map((c) => {
@@ -89,5 +97,7 @@ export async function getDashboardData(): Promise<{
       favoriteItems,
       favoriteCollections,
     },
+    pinnedItems: itemsForDashboard.pinned,
+    recentItems: itemsForDashboard.recent,
   };
 }
