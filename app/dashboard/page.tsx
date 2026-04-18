@@ -33,6 +33,15 @@ function ItemTypeIcon({ name }: { name: string }) {
   return <span>{icons[name] || "📄"}</span>;
 }
 
+// Helper to convert type name to plural form for URL
+function singularToPlural(name: string): string {
+  if (name === "All Items") return "items";
+  // Simple pluralization rules
+  if (name.endsWith("y")) return name.slice(0, -1) + "ies";
+  if (name.endsWith("s")) return name + "es";
+  return name + "s";
+}
+
 function SidebarContent({
   collapsed,
   isMobile = false,
@@ -60,7 +69,7 @@ function SidebarContent({
         ].map((type) => (
           <Link
             key={type.name}
-            href={`/items/${type.name.toLowerCase()}`}
+            href={`/items/${singularToPlural(type.name)}`}
             className="flex items-center justify-between w-full px-2 py-1.5 text-sm rounded-md hover:bg-muted text-foreground"
           >
             <div className="flex items-center gap-2">
