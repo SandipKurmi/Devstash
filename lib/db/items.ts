@@ -1,5 +1,43 @@
 import { prisma } from "@/lib/prisma";
 
+export interface ItemTypeWithCount {
+  id: string;
+  name: string;
+  pluralName: string;
+  icon: string;
+  color: string;
+  count: number;
+}
+
+export async function getItemTypes(userId: string): Promise<ItemTypeWithCount[]> {
+  const itemTypes = await prisma.itemType.findMany({
+    where: {
+      OR: [{ isSystem: true }, { userId }],
+    },
+    include: {
+      _count: {
+        select: {
+          items: {
+            where: { userId },
+          },
+        },
+      },
+    },
+  });
+
+  return itemTypes
+    .map((t) => ({
+      id: t.id,
+      name: t.name,
+      pluralName: t.name + "s",
+      icon: t.icon ?? "",
+      color: t.color ?? "#6b7280",
+      count: t._count.items,
+    }))
+    .filter((t) => t.count > 0)
+    .sort((a, b) => b.count - a.count);
+}
+
 export interface DashboardItem {
   id: string;
   title: string;

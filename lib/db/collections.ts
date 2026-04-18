@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import { getItemsForDashboard, type DashboardItem } from "@/lib/db/items";
+import { getItemsForDashboard, getItemTypes, type DashboardItem, type ItemTypeWithCount } from "@/lib/db/items";
 
-export type { DashboardItem };
+export type { DashboardItem, ItemTypeWithCount };
 
 const DEMO_EMAIL = "demo@devstash.io";
 
@@ -35,33 +35,44 @@ export async function getDashboardData(): Promise<{
   stats: DashboardStats;
   pinnedItems: DashboardItem[];
   recentItems: DashboardItem[];
+  itemTypes: ItemTypeWithCount[];
 }> {
   const user = await prisma.user.findUnique({ where: { email: DEMO_EMAIL } });
 
   if (!user) {
     return {
       collections: [],
-      stats: { totalItems: 0, totalCollections: 0, favoriteItems: 0, favoriteCollections: 0 },
+      stats: {
+        totalItems: 0,
+        totalCollections: 0,
+        favoriteItems: 0,
+        favoriteCollections: 0,
+      },
       pinnedItems: [],
       recentItems: [],
+      itemTypes: [],
     };
   }
 
-  const [rawCollections, totalItems, favoriteItems, itemsForDashboard] = await Promise.all([
-    prisma.collection.findMany({
-      where: { userId: user.id },
-      include: {
-        _count: { select: { items: true } },
-        items: {
-          select: { type: { select: { name: true, icon: true, color: true } } },
+  const [rawCollections, totalItems, favoriteItems, itemsForDashboard, itemTypes] =
+    await Promise.all([
+      prisma.collection.findMany({
+        where: { userId: user.id },
+        include: {
+          _count: { select: { items: true } },
+          items: {
+            select: {
+              type: { select: { name: true, icon: true, color: true } },
+            },
+          },
         },
-      },
-      orderBy: { updatedAt: "desc" },
-    }),
-    prisma.item.count({ where: { userId: user.id } }),
-    prisma.item.count({ where: { userId: user.id, isFavorite: true } }),
-    getItemsForDashboard(user.id),
-  ]);
+        orderBy: { updatedAt: "desc" },
+      }),
+      prisma.item.count({ where: { userId: user.id } }),
+      prisma.item.count({ where: { userId: user.id, isFavorite: true } }),
+      getItemsForDashboard(user.id),
+      getItemTypes(user.id),
+    ]);
 
   const collections: CollectionWithTypes[] = rawCollections.map((c) => {
     const typeCounts = new Map<string, TypeSummary>();
@@ -71,10 +82,17 @@ export async function getDashboardData(): Promise<{
       if (existing) {
         existing.count++;
       } else {
-        typeCounts.set(name, { name, icon: icon ?? "", color: color ?? "#6b7280", count: 1 });
+        typeCounts.set(name, {
+          name,
+          icon: icon ?? "",
+          color: color ?? "#6b7280",
+          count: 1,
+        });
       }
     }
-    const types = Array.from(typeCounts.values()).sort((a, b) => b.count - a.count);
+    const types = Array.from(typeCounts.values()).sort(
+      (a, b) => b.count - a.count,
+    );
     return {
       id: c.id,
       name: c.name,
@@ -99,5 +117,6 @@ export async function getDashboardData(): Promise<{
     },
     pinnedItems: itemsForDashboard.pinned,
     recentItems: itemsForDashboard.recent,
+    itemTypes,
   };
 }

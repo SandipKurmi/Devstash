@@ -32,8 +32,8 @@ import {
   StickyNote,
   File as FileIcon,
 } from "lucide-react";
-import { itemTypes, currentUser } from "@/lib/mock-data";
-import type { CollectionWithTypes, DashboardStats, DashboardItem } from "@/lib/db/collections";
+import { currentUser } from "@/lib/mock-data";
+import type { CollectionWithTypes, DashboardStats, DashboardItem, ItemTypeWithCount } from "@/lib/db/collections";
 
 function ItemTypeIcon({
   icon,
@@ -74,10 +74,12 @@ function SidebarContent({
   collapsed,
   isMobile = false,
   collections,
+  itemTypes,
 }: {
   collapsed: boolean;
   isMobile?: boolean;
   collections: CollectionWithTypes[];
+  itemTypes: ItemTypeWithCount[];
 }) {
   const favoriteCollections = collections.filter((c) => c.isFavorite);
   const allCollections = collections.filter((c) => !c.isFavorite);
@@ -155,20 +157,53 @@ function SidebarContent({
                 </span>
               </Link>
             ))}
+            <Link
+              href="/collections"
+              className="flex items-center w-full px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground rounded-md hover:bg-muted"
+            >
+              View all collections
+            </Link>
           </div>
         )}
 
-        {collapsed &&
-          favoriteCollections.map((collection) => (
-            <Link
-              key={collection.id}
-              href={`/collections/${collection.id}`}
-              className="flex items-center justify-center w-full px-2 py-1.5 rounded-md hover:bg-muted mb-1"
-              title={collection.name}
-            >
-              <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-            </Link>
-          ))}
+        {collapsed && favoriteCollections.length > 0 && (
+          <div className="mb-1">
+            <p className="text-xs text-muted-foreground px-2 py-1 uppercase tracking-widest">
+              Favorites
+            </p>
+            {favoriteCollections.map((collection) => (
+              <Link
+                key={collection.id}
+                href={`/collections/${collection.id}`}
+                className="flex items-center justify-center w-full px-2 py-1.5 rounded-md hover:bg-muted mb-1"
+                title={collection.name}
+              >
+                <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {collapsed && allCollections.length > 0 && (
+          <div>
+            <p className="text-xs text-muted-foreground px-2 py-1 uppercase tracking-widest">
+              Recent
+            </p>
+            {allCollections.slice(0, 5).map((collection) => (
+              <Link
+                key={collection.id}
+                href={`/collections/${collection.id}`}
+                className="flex items-center justify-center w-full px-2 py-1.5 rounded-md hover:bg-muted mb-1"
+                title={collection.name}
+              >
+                <span
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: collection.dominantColor }}
+                />
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       {!isMobile && (
@@ -210,9 +245,10 @@ interface DashboardShellProps {
   stats: DashboardStats;
   pinnedItems: DashboardItem[];
   recentItems: DashboardItem[];
+  itemTypes: ItemTypeWithCount[];
 }
 
-export default function DashboardShell({ collections, stats, pinnedItems, recentItems }: DashboardShellProps) {
+export default function DashboardShell({ collections, stats, pinnedItems, recentItems, itemTypes }: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
@@ -237,7 +273,7 @@ export default function DashboardShell({ collections, stats, pinnedItems, recent
             </SheetTrigger>
             <SheetContent side="left" className="w-60 p-0">
               <ScrollArea className="h-full">
-                <SidebarContent collapsed={false} isMobile collections={collections} />
+                <SidebarContent collapsed={false} isMobile collections={collections} itemTypes={itemTypes} />
               </ScrollArea>
             </SheetContent>
           </Sheet>
@@ -290,7 +326,7 @@ export default function DashboardShell({ collections, stats, pinnedItems, recent
             </Button>
           </div>
           <ScrollArea className="flex-1">
-            <SidebarContent collapsed={sidebarCollapsed} collections={collections} />
+            <SidebarContent collapsed={sidebarCollapsed} collections={collections} itemTypes={itemTypes} />
           </ScrollArea>
         </aside>
 
